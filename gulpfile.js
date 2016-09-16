@@ -4,6 +4,7 @@ const fs = require("fs");
 const gulp = require("gulp");
 const del = require('del');
 const sequence = require("run-sequence");
+const es = require('event-stream');
 const merge = require('event-stream').merge;
 const jshint = require("gulp-jshint");
 const browserify = require("browserify");
@@ -18,6 +19,7 @@ const ghPages = require('gulp-gh-pages');
 const bump = require('gulp-bump');
 const argv = require('minimist')(process.argv.slice(2));
 const git = require('gulp-git');
+const base91 = require('base91');
 
 gulp.task("clean", (done) => {
     return del([
@@ -138,12 +140,24 @@ gulp.task("compress-dict", () => {
         .pipe(gulp.dest("dict/"));
 });
 
+gulp.task("create-base91-dict", () => {
+    if (!fs.existsSync("dict-base91/")) {
+        fs.mkdirSync("dict-base91/");
+    }
+    return gulp.src("dict/*.gz")
+      .pipe(es.map((file, cb) => {
+          file.contents = new Buffer(base91.encode(file.contents));
+          cb(null, file);
+      }))
+      .pipe(gulp.dest("dict-base91/"));
+});
+
 gulp.task("clean-dat-files", (done) => {
     return del([ "dict/*.dat" ], done);
 });
 
 gulp.task("build-dict", [ "build", "clean-dict" ], () => {
-    sequence("create-dat-files", "compress-dict", "clean-dat-files");
+    sequence("create-dat-files", "compress-dict", "clean-dat-files", "create-base91-dict");
 });
 
 gulp.task("test", [ "build" ], () => {

@@ -6,16 +6,24 @@
   "browser": {
     "./src/loader/NodeDictionaryLoader.js": "./src/loader/BrowserDictionaryLoader.js"
   },
+  "browserify": {
+    "transform": ["browserify-shim"]
+  },
+  "browserify-shim": {
+    "./node_modules/base91/lib/base91.js": "base91"
+  },
   "bugs": {
     "url": "https://github.com/takuyaa/kuromoji.js/issues"
   },
   "dependencies": {
     "async": "^2.0.1",
+    "base91": "0.0.5",
     "doublearray": "0.0.2",
     "zlibjs": "^0.2.0"
   },
   "devDependencies": {
     "browserify": "^13.1.0",
+    "browserify-shim": "^3.8.12",
     "chai": "^3.2.0",
     "coveralls": "^2.11.2",
     "del": "^2.2.1",
