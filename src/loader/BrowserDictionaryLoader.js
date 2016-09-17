@@ -19,7 +19,6 @@
 
 var zlib = require("zlibjs/bin/gunzip.min.js");
 var DictionaryLoader = require("./DictionaryLoader");
-var base91 = require("base91");
 
 /**
  * BrowserDictionaryLoader inherits DictionaryLoader, using jQuery XHR for download
@@ -38,7 +37,7 @@ BrowserDictionaryLoader.prototype = Object.create(DictionaryLoader.prototype);
  * @param {BrowserDictionaryLoader~onLoad} callback Callback function
  */
 BrowserDictionaryLoader.prototype.loadArrayBuffer = function (url, callback) {
-    if (typeof GM_getResourceText != 'undefined') {
+    if (typeof base91 !== 'undefined' && typeof GM_getResourceText !== 'undefined') {
         var u8Array = base91.decode(GM_getResourceText(url));
         var gz = new zlib.Zlib.Gunzip(u8Array);
         var typed_array = gz.decompress();
